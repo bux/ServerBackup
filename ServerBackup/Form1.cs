@@ -32,6 +32,9 @@ namespace ServerBackup {
             textBox1.Text = lstDatabases.Aggregate((db1, db2) => db1 + Environment.NewLine + db2);
 
             dbHelper.DumpToFiles(lstDatabases, _settings.BackupPath);
+
+            var fileHelper = new FileHelper();
+            fileHelper.BackupFilesAndFolder(_settings.BackupSourceList);
         }
     }
 }

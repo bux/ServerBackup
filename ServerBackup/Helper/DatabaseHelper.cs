@@ -62,13 +62,12 @@ namespace ServerBackup {
                     File.Delete(zipFileName);
                 }
 
-                using (ZipArchive archive = ZipFile.Open(zipFileName, ZipArchiveMode.Create)) {
-                    archive.CreateEntryFromFile(fileName, Path.GetFileName(fileName));
-                }
+                FileHelper.ZipSingleFile(zipFileName, fileName);
 
                 File.Delete(fileName);
             }
         }
+
 
         /// <summary>
         /// 
