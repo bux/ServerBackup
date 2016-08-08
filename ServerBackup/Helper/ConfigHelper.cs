@@ -12,6 +12,9 @@ namespace ServerBackup {
         private const string USER_NAME = "User";
         private const string PASSWORD_NAME = "Password";
         private const string BACKUPFOLDER_NAME = "BackupFolder";
+        private const string BACKUPSOURCELIST_NAME = "BackupSources";
+        private const string BACKUPITEM_NAME = "BackupItem";
+        private const string ITEMTYPE_NAME = "ItemType";
 
         private readonly FileInfo _fiConfig = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"config\config.xml"));
         private XDocument _xDocConfig;
@@ -36,8 +39,9 @@ namespace ServerBackup {
                 var userElement = new XElement(USER_NAME, "root");
                 var passwordElement = new XElement(PASSWORD_NAME, "password");
                 var backupFolderElement = new XElement(BACKUPFOLDER_NAME, "%UserProfile%\\Documents\\Backup");
+                var backupSourcesListItem = new XElement(BACKUPSOURCELIST_NAME);
 
-                var lstElements = new List<XElement> {serverElement, userElement, passwordElement, backupFolderElement};
+                var lstElements = new List<XElement> { serverElement, userElement, passwordElement, backupFolderElement, backupSourcesListItem };
 
                 _xDocConfig = new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
@@ -84,6 +88,21 @@ namespace ServerBackup {
             var backupFolderElement = _xDocConfig.Descendants().FirstOrDefault(d => d.Name == BACKUPFOLDER_NAME);
             if (backupFolderElement != null) {
                 loadedSettings.BackupPath = backupFolderElement.Value;
+            }
+
+            var backupSourcesElement = _xDocConfig.Descendants().FirstOrDefault(d => d.Name == BACKUPSOURCELIST_NAME);
+            if (backupSourcesElement != null) {
+                try {
+                    List<BackupItem> lstBackupItems = backupSourcesElement.Descendants().Where(d => d.Name == BACKUPITEM_NAME).Select(d => new BackupItem() {
+                        ItemPath = d.Value.ToString(),
+                        ItemType = EnumHelper.ParseEnum<BackupItemType>(d.Attribute(ITEMTYPE_NAME).Value)
+                    }).ToList();
+
+                    loadedSettings.BackupItems = lstBackupItems;
+
+                } catch (Exception ex) {
+                    loadedSettings.BackupItems = new List<BackupItem>();
+                }
             }
 
             return loadedSettings;

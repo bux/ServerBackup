@@ -27,5 +27,10 @@ namespace ServerBackup {
         /// </summary>
         public string BackupPath { get; set; }
 
+        /// <summary>
+        /// Gets or sets the BackupSourceList
+        /// </summary>
+        public List<BackupItem> BackupItems { get; set; }
+        
     }
 }
