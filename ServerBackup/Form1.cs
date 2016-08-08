@@ -24,7 +24,7 @@ namespace ServerBackup {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e) {
+        private void btnBackupDatabases_Click(object sender, EventArgs e) {
 
             var dbHelper = new DatabaseHelper(_settings.Server, _settings.User, _settings.Password);
 
@@ -33,8 +33,11 @@ namespace ServerBackup {
 
             dbHelper.DumpToFiles(lstDatabases, _settings.BackupPath);
 
+        }
+
+        private void btnBackupFiles_Click(object sender, EventArgs e) {
             var fileHelper = new FileHelper();
-            fileHelper.BackupFilesAndFolder(_settings.BackupSourceList);
+            fileHelper.BackupFilesAndFolder(_settings.BackupPath, _settings.BackupItems);
         }
     }
 }

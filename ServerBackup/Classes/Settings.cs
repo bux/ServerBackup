@@ -30,7 +30,7 @@ namespace ServerBackup {
         /// <summary>
         /// Gets or sets the BackupSourceList
         /// </summary>
-        public List<string> BackupSourceList { get; set; }
+        public List<BackupItem> BackupItems { get; set; }
         
     }
 }

@@ -14,6 +14,7 @@ namespace ServerBackup {
         private const string BACKUPFOLDER_NAME = "BackupFolder";
         private const string BACKUPSOURCELIST_NAME = "BackupSources";
         private const string BACKUPITEM_NAME = "BackupItem";
+        private const string ITEMTYPE_NAME = "ItemType";
 
         private readonly FileInfo _fiConfig = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"config\config.xml"));
         private XDocument _xDocConfig;
@@ -40,7 +41,7 @@ namespace ServerBackup {
                 var backupFolderElement = new XElement(BACKUPFOLDER_NAME, "%UserProfile%\\Documents\\Backup");
                 var backupSourcesListItem = new XElement(BACKUPSOURCELIST_NAME);
 
-                var lstElements = new List<XElement> {serverElement, userElement, passwordElement, backupFolderElement, backupSourcesListItem};
+                var lstElements = new List<XElement> { serverElement, userElement, passwordElement, backupFolderElement, backupSourcesListItem };
 
                 _xDocConfig = new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
@@ -91,7 +92,17 @@ namespace ServerBackup {
 
             var backupSourcesElement = _xDocConfig.Descendants().FirstOrDefault(d => d.Name == BACKUPSOURCELIST_NAME);
             if (backupSourcesElement != null) {
-                loadedSettings.BackupSourceList = backupSourcesElement.Descendants().Where(d => d.Name == BACKUPITEM_NAME).Select(d => d.Value.ToString()).ToList();
+                try {
+                    List<BackupItem> lstBackupItems = backupSourcesElement.Descendants().Where(d => d.Name == BACKUPITEM_NAME).Select(d => new BackupItem() {
+                        ItemPath = d.Value.ToString(),
+                        ItemType = EnumHelper.ParseEnum<BackupItemType>(d.Attribute(ITEMTYPE_NAME).Value)
+                    }).ToList();
+
+                    loadedSettings.BackupItems = lstBackupItems;
+
+                } catch (Exception ex) {
+                    loadedSettings.BackupItems = new List<BackupItem>();
+                }
             }
 
             return loadedSettings;
