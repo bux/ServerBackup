@@ -1,46 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System.Linq;
+using Ionic.Zip;
 
 
 namespace ServerBackup {
     public class FileHelper {
 
-        public void BackupFilesAndFolder(string backupPath, List<BackupItem> backupItems) {
+        public bool BackupFilesAndFolder(string backupPath, List<BackupItem> backupItems) {
+
+            if (backupItems.Any() == false) {
+                return false;
+            }
+
+            backupPath = Environment.ExpandEnvironmentVariables(backupPath);
+
+            var directoryPath = Path.Combine(backupPath, "Files");
+            Directory.CreateDirectory(directoryPath);
 
             var zipFileName = string.Format("{0}_Files.zip", DateTime.Now.ToString("yyyyMMdd"));
-            zipFileName = Path.Combine(backupPath, zipFileName);
+            zipFileName = Path.Combine(directoryPath, zipFileName);
 
-            zipFileName = Environment.ExpandEnvironmentVariables(zipFileName);
-
-            using (var archive = ZipFile.Open(zipFileName, ZipArchiveMode.Create)) {
+            using (var zipFile = new ZipFile()) {
+                zipFile.AddDirectoryWillTraverseReparsePoints = false;
 
                 foreach (var backupItem in backupItems) {
 
                     if (backupItem.ItemType == BackupItemType.File) {
                         if (File.Exists(backupItem.ItemPath)) {
-                            archive.CreateEntryFromFile(backupItem.ItemPath, backupItem.ItemPath, CompressionLevel.Optimal);
+                            zipFile.AddFile(backupItem.ItemPath, "");
                         }
                     }
 
                     if (backupItem.ItemType == BackupItemType.Folder) {
                         if (Directory.Exists(backupItem.ItemPath)) {
-                            archive.CreateEntry(backupItem.ItemPath, CompressionLevel.Optimal);
+                            zipFile.AddDirectory(backupItem.ItemPath, new DirectoryInfo(backupItem.ItemPath).Name);
                         }
                     }
                 }
+
+                zipFile.Save(zipFileName);
             }
+
+            return true;
         }
 
 
         public static void ZipSingleFile(string zipFileName, string fileName) {
-            using (var archive = ZipFile.Open(zipFileName, ZipArchiveMode.Create)) {
-                archive.CreateEntryFromFile(fileName, Path.GetFileName(fileName));
+
+            using (var zipFile = new ZipFile()) {
+                if (File.Exists(fileName)) {
+                    zipFile.AddFile(fileName);
+                    zipFile.Save(zipFileName);
+                }
             }
         }
 
-        
     }
-
 }

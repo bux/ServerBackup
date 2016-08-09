@@ -36,8 +36,11 @@ namespace ServerBackup {
 
                 var constring = GetConnectionString(databaseName);
 
+                var directoryPath = Path.Combine(databaseBackupPath, "Databases");
+                Directory.CreateDirectory(directoryPath);
+
                 var fileName = string.Format("{0}_{1}.sql", DateTime.Now.ToString("yyyyMMdd"), databaseName);
-                fileName = Path.Combine(databaseBackupPath, fileName);
+                fileName = Path.Combine(directoryPath, fileName);
 
                 lstFileNames.Add(fileName);
 
