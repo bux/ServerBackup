@@ -1,5 +1,5 @@
 ﻿namespace ServerBackup {
-    partial class Form1 {
+    partial class ServerBackup {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -65,7 +65,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnBackupDatabases);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "ServerBackup";
             this.ResumeLayout(false);
             this.PerformLayout();
 

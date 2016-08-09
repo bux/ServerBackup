@@ -14,12 +14,12 @@ using MySql.Data.MySqlClient;
 
 
 namespace ServerBackup {
-    public partial class Form1 : Form {
+    public partial class ServerBackup : Form {
 
         private readonly Settings _settings;
 
 
-        public Form1(Settings settings) {
+        public ServerBackup(Settings settings) {
             _settings = settings;
             InitializeComponent();
         }

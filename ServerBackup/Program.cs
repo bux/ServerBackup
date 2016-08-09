@@ -21,16 +21,20 @@ namespace ServerBackup {
             LoadConfig();
 
             if (args.Length == 0) {
-                Application.Run(new Form1(_settings));
+                Application.Run(new ServerBackup(_settings));
             } else {
 
-                if (args[0] == "-q") {
+                if (args[0] == "-d") {
                     var dbHelper = new DatabaseHelper(_settings.Server, _settings.User, _settings.Password);
                     var lstDatabases = dbHelper.GetDatabases();
-                    Console.Write(lstDatabases.Aggregate((db1, db2) => db1 + Environment.NewLine + db2));
-
                     dbHelper.DumpToFiles(lstDatabases, _settings.BackupPath);
                 }
+
+                if (args[0] == "-f") {
+                    var fileHelper = new FileHelper();
+                    fileHelper.BackupFilesAndFolder(_settings.BackupPath, _settings.BackupItems);
+                }
+
             }
         }
 
