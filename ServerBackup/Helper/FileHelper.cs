@@ -23,6 +23,8 @@ namespace ServerBackup {
             zipFileName = Path.Combine(directoryPath, zipFileName);
 
             using (var zipFile = new ZipFile()) {
+                zipFile.UseZip64WhenSaving = Zip64Option.Always;
+
                 zipFile.AddDirectoryWillTraverseReparsePoints = false;
 
                 foreach (var backupItem in backupItems) {
