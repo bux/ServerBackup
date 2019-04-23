@@ -1,3 +1,5 @@
+# This repo is obsolete and therefore archived
+
 * Start tool
 * End tool
 * Edit config/config.xml
